@@ -38,3 +38,7 @@ path = "src/bin/handlers/api.rs"
 [[bin]]
 name = "migrate-indexes"
 path = "src/bin/scripts/migrate-indexes.rs"
+
+[[bin]]
+name = "clone-voice"
+path = "src/bin/handlers/queues/clone-voice.rs"

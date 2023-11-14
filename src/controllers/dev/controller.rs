@@ -4,24 +4,8 @@ use mongoose::{
     types::ListOptions,
     Model,
 };
-use serde::Serialize;
 
-use crate::{
-    config::{self, Env, Stage},
-    errors::{ApiResponse, AppResponse},
-    models::record::Record,
-};
-
-#[derive(Serialize)]
-struct PingMessage {
-    stage: Stage,
-    region: String,
-}
-
-pub async fn ping() -> AppResponse {
-    let Env { stage, region, .. } = config::Env::new()?;
-    Ok(HttpResponse::Ok().json(PingMessage { stage, region }))
-}
+use crate::{errors::ApiResponse, models::record::Record};
 
 pub async fn create_record() -> ApiResponse {
     let now = DateTime::now();

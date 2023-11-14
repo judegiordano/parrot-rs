@@ -2,13 +2,11 @@ pub mod aws;
 pub mod controllers;
 pub mod models;
 
-pub mod config {
+pub mod env {
     use std::env::VarError;
 
     use serde::{Deserialize, Serialize};
     use tracing::Level;
-
-    use crate::errors::AppError;
 
     #[derive(Debug, Deserialize, Serialize)]
     pub enum Stage {
@@ -19,51 +17,38 @@ pub mod config {
     }
 
     #[derive(Debug)]
-    pub struct Env {
+    pub struct Config {
         pub stage: Stage,
-        pub region: String,
         pub log_level: Level,
-        pub mongo_uri: String,
+        pub eleven_labs_api_key: String,
+        pub clone_voice_queue_url: String,
     }
 
-    impl Env {
-        pub fn _init() -> Result<Self, VarError> {
+    impl Config {
+        pub fn new() -> Result<Self, VarError> {
             if cfg!(debug_assertions) {
                 use dotenv::dotenv;
                 dotenv().ok();
             }
             Ok(Self {
+                log_level: match std::env::var("LOG_LEVEL")?.to_uppercase().as_ref() {
+                    "DEBUG" => Level::DEBUG,
+                    "INFO" => Level::INFO,
+                    "ERROR" => Level::ERROR,
+                    _ => Level::ERROR,
+                },
                 stage: match std::env::var("STAGE")?.to_uppercase().as_str() {
                     "LOCAL" => Stage::Local,
                     "PROD" => Stage::Prod,
                     "TEST" => Stage::Test,
                     other => Stage::Other(other.to_string()),
                 },
-                region: std::env::var("REGION")?,
-                log_level: match std::env::var("LOG_LEVEL")?.to_uppercase().as_str() {
-                    "DEBUG" => Level::DEBUG,
-                    "INFO" => Level::INFO,
-                    "WARN" => Level::WARN,
-                    _ => Level::ERROR,
-                },
-                mongo_uri: std::env::var("MONGO_URI")?,
+                eleven_labs_api_key: std::env::var("ELEVEN_LABS_API_KEY")?,
+                clone_voice_queue_url: std::env::var("CLONE_VOICE_QUEUE_URL")?,
             })
-        }
-
-        pub fn new() -> Result<Self, AppError> {
-            match Self::_init() {
-                Ok(env) => Ok(env),
-                Err(err) => {
-                    eprintln!("error initializing env: {err:?}");
-                    Err(AppError::InternalServerError {
-                        error: Some(err.to_string()),
-                    })
-                }
-            }
         }
     }
 }
-
 pub mod errors {
     use std::fmt::Display;
 
@@ -155,13 +140,12 @@ pub mod errors {
 }
 
 pub mod logger {
-    use tracing::Level;
     use tracing_subscriber::FmtSubscriber;
 
-    use crate::config;
+    use crate::env::Config;
 
     pub fn init() -> anyhow::Result<()> {
-        let log_level = config::Env::new().map_or(Level::ERROR, |e| e.log_level);
+        let log_level = Config::new()?.log_level;
         let subscriber = FmtSubscriber::builder().with_max_level(log_level).finish();
         tracing::subscriber::set_global_default(subscriber)?;
         Ok(())
