@@ -36,9 +36,5 @@ name = "api"
 path = "src/bin/handlers/api.rs"
 
 [[bin]]
-name = "simple-function"
-path = "src/bin/handlers/simple-function.rs"
-
-[[bin]]
 name = "migrate-indexes"
 path = "src/bin/scripts/migrate-indexes.rs"

@@ -4,12 +4,7 @@ import { Function, type StackContext } from 'sst/constructs'
 function ApiStack({ stack }: StackContext) {
 	const api = new Function(stack, 'api', {
 		handler: 'src/bin/handlers/api.rs',
-		url: { cors: true },
-		logRetention: 'one_week'
-	})
-	new Function(stack, 'simple-function', {
-		handler: 'src/bin/handlers/simple-function.rs',
-		logRetention: 'one_week'
+		url: { cors: true }
 	})
 	stack.addOutputs({ url: api.url })
 }
@@ -24,6 +19,7 @@ export default {
 	stacks(app) {
 		app.setDefaultFunctionProps({
 			runtime: 'rust',
+			logRetention: 'one_week',
 			architecture: 'arm_64',
 			memorySize: '2048 MB',
 			timeout: 28,
