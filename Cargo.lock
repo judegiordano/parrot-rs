@@ -1357,6 +1357,25 @@ dependencies = [
 ]
 
 [[package]]
+name = "parrot-api"
+version = "0.1.0"
+dependencies = [
+ "anyhow",
+ "dotenv",
+ "futures",
+ "lambda-web",
+ "lambda_http",
+ "lambda_runtime 0.8.2",
+ "mongoose",
+ "serde",
+ "serde_json",
+ "thiserror",
+ "tokio",
+ "tracing",
+ "tracing-subscriber",
+]
+
+[[package]]
 name = "paste"
 version = "1.0.14"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -1823,25 +1842,6 @@ name = "spin"
 version = "0.5.2"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "6e63cff320ae2c57904679ba7cb63280a3dc4613885beafb148ee7bf9aa9042d"
-
-[[package]]
-name = "sst_example"
-version = "0.1.0"
-dependencies = [
- "anyhow",
- "dotenv",
- "futures",
- "lambda-web",
- "lambda_http",
- "lambda_runtime 0.8.2",
- "mongoose",
- "serde",
- "serde_json",
- "thiserror",
- "tokio",
- "tracing",
- "tracing-subscriber",
-]
 
 [[package]]
 name = "stringprep"

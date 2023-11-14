@@ -1,7 +1,7 @@
 use anyhow::Result;
 use lambda_runtime::{run, service_fn, LambdaEvent};
+use parrot_api::logger;
 use serde::{Deserialize, Serialize};
-use sst_example::logger;
 
 #[derive(Debug, Deserialize, Serialize)]
 struct ExamplePayload {

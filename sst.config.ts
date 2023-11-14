@@ -17,7 +17,7 @@ function ApiStack({ stack }: StackContext) {
 export default {
 	config(_input) {
 		return {
-			name: 'aws-sst-template',
+			name: 'parrot-api',
 			region: 'us-east-1',
 		}
 	},

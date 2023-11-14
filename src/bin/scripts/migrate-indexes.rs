@@ -1,5 +1,5 @@
 use anyhow::Result;
-use sst_example::{logger, models::record::Record};
+use parrot_api::{logger, models::record::Record};
 
 #[tokio::main]
 pub async fn main() -> Result<()> {
