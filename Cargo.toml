@@ -1,0 +1,41 @@
+[package]
+name = "sst_example"
+version = "0.1.0"
+edition = "2021"
+
+[profile.release]
+debug = 0
+incremental = false
+panic = "abort"
+opt-level = 3       # 0-3
+strip = 'symbols'   # strip symbols from binary
+lto = true          # enable link time optimization
+
+[dependencies]
+anyhow = "1.0.75"
+futures = "0.3.28"
+lambda-web = { version = "0.2.1", features = ["actix-web", "actix4"] }
+lambda_http = "0.8.1"
+lambda_runtime = "0.8.1"
+mongoose = "0.1.16"
+serde = "1.0.188"
+serde_json = "1.0.107"
+thiserror = "1.0.48"
+tokio = { version = "1", features = ["macros"] }
+tracing = { version = "0.1", features = ["log"] }
+tracing-subscriber = { version = "0.3", default-features = false, features = [
+	"fmt",
+] }
+dotenv = "0.15.0"
+
+[[bin]]
+name = "api"
+path = "src/bin/handlers/api.rs"
+
+[[bin]]
+name = "simple-function"
+path = "src/bin/handlers/simple-function.rs"
+
+[[bin]]
+name = "migrate-indexes"
+path = "src/bin/scripts/migrate-indexes.rs"

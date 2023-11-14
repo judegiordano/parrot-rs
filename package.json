@@ -1,0 +1,22 @@
+{
+  "name": "aws-sst-template",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "npx sst dev -r dotenv/config",
+    "build": "sst build",
+    "remove": "sst remove",
+    "console": "sst console",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "@tsconfig/node18": "^18.2.1",
+    "@types/node": "^20.6.0",
+    "aws-cdk-lib": "2.91.0",
+    "constructs": "10.2.69",
+    "dotenv": "^16.3.1",
+    "sst": "^2.24.27",
+    "typescript": "^5.2.2"
+  }
+}

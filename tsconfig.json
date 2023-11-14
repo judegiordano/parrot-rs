@@ -1,0 +1,12 @@
+{
+  "exclude": [
+    "packages"
+  ],
+  "include": [
+    "sst.config.ts"
+  ],
+  "compilerOptions": {
+    "module": "esnext",
+    "moduleResolution": "node"
+  }
+}

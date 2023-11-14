@@ -1,0 +1,18 @@
+{
+	"Pretty Print": {
+		"scope": "rust",
+		"description": "pretty print println!",
+		"prefix": "print",
+		"body": [
+			"println!(\"{:#?}\", ${0});"
+		]
+	},
+	"Derive Debug Attriubte": {
+		"scope": "rust",
+		"description": "derive debug attribute",
+		"prefix": "debug_attr",
+		"body": [
+			"#[derive(Debug, Deserialize, Serialize)]"
+		]
+	}
+}

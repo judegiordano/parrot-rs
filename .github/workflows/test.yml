@@ -1,0 +1,40 @@
+name: Run Tests
+
+on: push
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: use Rust
+        uses: actions-rs/toolchain@v1
+        with:
+          toolchain: 1.72.0
+          profile: minimal
+          override: true
+          components: clippy
+
+      - name: use Rust cache
+        uses: Swatinem/rust-cache@v2
+
+      - name: use nextest
+        uses: taiki-e/install-action@nextest
+
+      - name: add clippy
+        run: rustup component add clippy
+
+      - name: clippy lint
+        run: cargo lint
+
+      - name: cargo test
+        run: cargo next-test
+
+    env:
+      LOG_LEVEL: info
+      STAGE: test
