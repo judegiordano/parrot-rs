@@ -27,6 +27,9 @@ tracing-subscriber = { version = "0.3", default-features = false, features = [
 	"fmt",
 ] }
 dotenv = "0.15.0"
+aws-sdk-s3 = "0.35.0"
+aws-sdk-sqs = "0.35.0"
+aws-config = "0.57.1"
 
 [[bin]]
 name = "api"
