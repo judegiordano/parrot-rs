@@ -7,12 +7,20 @@ use mongoose::{
 use serde::{Deserialize, Serialize};
 
 #[derive(Debug, Deserialize, Serialize, Clone)]
+pub enum VoiceStatus {
+    Active,
+    Draft,
+    Deleted,
+}
+
+#[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Voice {
     #[serde(rename = "_id")]
     pub id: String,
     pub name: String,
+    pub status: VoiceStatus,
     pub description: Option<String>,
-    pub eleven_labs_id: String,
+    pub eleven_labs_id: Option<String>,
     pub created_at: DateTime,
     pub updated_at: DateTime,
 }
@@ -22,8 +30,9 @@ impl Default for Voice {
         Self {
             id: Self::generate_nanoid(),
             name: std::string::String::default(),
+            status: VoiceStatus::Draft,
             description: None,
-            eleven_labs_id: std::string::String::default(),
+            eleven_labs_id: None,
             created_at: DateTime::now(),
             updated_at: DateTime::now(),
         }

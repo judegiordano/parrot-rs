@@ -1,5 +1,6 @@
 pub mod aws;
 pub mod controllers;
+pub mod eleven_labs;
 pub mod models;
 
 pub mod env {
@@ -149,5 +150,14 @@ pub mod logger {
         let subscriber = FmtSubscriber::builder().with_max_level(log_level).finish();
         tracing::subscriber::set_global_default(subscriber)?;
         Ok(())
+    }
+}
+
+pub mod types {
+    use serde::{Deserialize, Serialize};
+
+    #[derive(Deserialize, Serialize)]
+    pub struct CloneVoiceFifoMessage {
+        pub voice_id: String,
     }
 }

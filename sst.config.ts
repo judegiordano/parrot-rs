@@ -1,5 +1,5 @@
 import { type SSTConfig } from 'sst'
-import { Function, Queue, type StackContext } from 'sst/constructs'
+import { Bucket, Function, Queue, type StackContext } from 'sst/constructs'
 
 function ApiStack({ stack }: StackContext) {
 	const cloneVoiceQueue = new Queue(stack, 'clone-voice-fifo', {
@@ -11,6 +11,23 @@ function ApiStack({ stack }: StackContext) {
 		url: { cors: true }
 	})
 	api.attachPermissions(['sqs'])
+
+	const outputBucket = new Bucket(stack, 'outputs', {
+		cdk: { bucket: { versioned: true, publicReadAccess: false } }
+	})
+	outputBucket.attachPermissions(['s3'])
+
+	const sampleBucket = new Bucket(stack, 'samples', {
+		cdk: { bucket: { versioned: true, publicReadAccess: false } }
+	})
+	sampleBucket.attachPermissions(['s3'])
+	sampleBucket.addNotifications(stack, {
+		sampleUploaded: {
+			function: { handler: 'src/handlers/triggers/sample-uploaded.rs' },
+			events: ['object_created_put'],
+			filters: [{ suffix: '.mp3' }],
+		}
+	})
 
 	const functions = stack.getAllFunctions()
 	functions.forEach((fn) => {

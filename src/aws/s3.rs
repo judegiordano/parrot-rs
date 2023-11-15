@@ -16,10 +16,13 @@ pub struct Client {
 }
 
 impl Client {
-    pub async fn new(bucket: String) -> Self {
+    pub async fn new(bucket: &str) -> Self {
         let config = aws_config::load_from_env().await;
         let client = s3::Client::new(&config);
-        Self { bucket, client }
+        Self {
+            bucket: bucket.to_string(),
+            client,
+        }
     }
 
     pub async fn list_buckets(&self) -> Result<ListBucketsOutput> {

@@ -30,6 +30,10 @@ dotenv = "0.15.0"
 aws-sdk-s3 = "0.35.0"
 aws-sdk-sqs = "0.35.0"
 aws-config = "0.57.1"
+bytes = "1.5.0"
+reqwest = { version = "0.11.22", features = ["json", "multipart"] }
+slug = "0.1.5"
+aws_lambda_events = "0.12.1"
 
 [[bin]]
 name = "api"
@@ -42,3 +46,7 @@ path = "src/bin/scripts/migrate-indexes.rs"
 [[bin]]
 name = "clone-voice"
 path = "src/bin/handlers/queues/clone-voice.rs"
+
+[[bin]]
+name = "sample-uploaded"
+path = "src/bin/handlers/triggers/sample-uploaded.rs"
