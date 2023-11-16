@@ -34,6 +34,9 @@ jobs:
           profile: minimal
           override: true
 
+      - name: add aarch64-unknown-linux-gnu
+        run: rustup target add aarch64-unknown-linux-gnu
+
       - name: use Zig
         uses: korandoru/setup-zig@v1
         with:
