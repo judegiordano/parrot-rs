@@ -21,7 +21,7 @@ function ApiStack({ stack }: StackContext) {
 
 	sampleBucket.addNotifications(stack, {
 		sampleUploaded: {
-			function: { handler: 'src/handlers/triggers/sample-uploaded.rs' },
+			function: { handler: 'src/bin/handlers/triggers/sample-uploaded.rs' },
 			events: ['object_created_put'],
 			filters: [{ suffix: '.mp3' }],
 		}
@@ -34,6 +34,7 @@ function ApiStack({ stack }: StackContext) {
 		fn.addEnvironment('OUTPUTS_BUCKET_NAME', outputBucket.bucketName)
 		fn.attachPermissions(['s3', 'sqs'])
 	})
+	stack.addOutputs({ api: api.url })
 }
 
 export default {
