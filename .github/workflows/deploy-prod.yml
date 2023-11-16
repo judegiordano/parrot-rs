@@ -65,6 +65,9 @@ jobs:
       - name: pnpm install
         run: pnpm install --frozen-lockfile
 
+      - name: add openssl
+        run: cargo add openssl@0.10.45 --features vendored
+
       - name: pnpm deploy
         run: |
           set -euxo pipefail
