@@ -1,6 +1,6 @@
-use lambda_web::actix_web::web::{ServiceConfig, scope};
-mod dev;
+use lambda_web::actix_web::web::{scope, ServiceConfig};
+mod samples;
 
 pub fn routes(cfg: &mut ServiceConfig) {
-    cfg.service(scope("/dev").configure(dev::router));
+    cfg.service(scope("/samples").configure(samples::router));
 }

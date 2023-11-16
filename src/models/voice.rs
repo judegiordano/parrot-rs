@@ -13,12 +13,22 @@ pub enum VoiceStatus {
     Deleted,
 }
 
+impl VoiceStatus {
+    pub fn to_string(&self) -> String {
+        match self {
+            VoiceStatus::Active => "active".to_string(),
+            VoiceStatus::Draft => "draft".to_string(),
+            VoiceStatus::Deleted => "deleted".to_string(),
+        }
+    }
+}
+
 #[derive(Debug, Deserialize, Serialize, Clone)]
 pub struct Voice {
     #[serde(rename = "_id")]
     pub id: String,
     pub name: String,
-    pub status: VoiceStatus,
+    pub status: String,
     pub description: Option<String>,
     pub eleven_labs_id: Option<String>,
     pub created_at: DateTime,
@@ -30,7 +40,7 @@ impl Default for Voice {
         Self {
             id: Self::generate_nanoid(),
             name: std::string::String::default(),
-            status: VoiceStatus::Draft,
+            status: VoiceStatus::Draft.to_string(),
             description: None,
             eleven_labs_id: None,
             created_at: DateTime::now(),

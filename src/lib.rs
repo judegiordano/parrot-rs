@@ -23,6 +23,8 @@ pub mod env {
         pub log_level: Level,
         pub eleven_labs_api_key: String,
         pub clone_voice_queue_url: String,
+        pub samples_bucket_name: String,
+        pub outputs_bucket_name: String,
     }
 
     impl Config {
@@ -46,10 +48,13 @@ pub mod env {
                 },
                 eleven_labs_api_key: std::env::var("ELEVEN_LABS_API_KEY")?,
                 clone_voice_queue_url: std::env::var("CLONE_VOICE_QUEUE_URL")?,
+                samples_bucket_name: std::env::var("SAMPLES_BUCKET_NAME")?,
+                outputs_bucket_name: std::env::var("OUTPUTS_BUCKET_NAME")?,
             })
         }
     }
 }
+
 pub mod errors {
     use std::fmt::Display;
 
