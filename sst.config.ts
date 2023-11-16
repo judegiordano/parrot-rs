@@ -2,14 +2,13 @@ import { type SSTConfig } from 'sst'
 import { Bucket, Function, Queue, type StackContext } from 'sst/constructs'
 
 function ApiStack({ stack }: StackContext) {
-	new Function(stack, 'api', {
-		handler: 'src/bin/handlers/api.rs',
-		url: { cors: true }
-	})
-
 	const cloneVoiceQueue = new Queue(stack, 'clone-voice-fifo', {
 		consumer: 'src/bin/handlers/queues/clone-voice.rs',
 		cdk: { queue: { fifo: true } }
+	})
+	const api = new Function(stack, 'api', {
+		handler: 'src/bin/handlers/api.rs',
+		url: { cors: true }
 	})
 
 	const outputBucket = new Bucket(stack, 'outputs', {
@@ -19,6 +18,7 @@ function ApiStack({ stack }: StackContext) {
 	const sampleBucket = new Bucket(stack, 'samples', {
 		cdk: { bucket: { versioned: true, publicReadAccess: false } }
 	})
+
 	sampleBucket.addNotifications(stack, {
 		sampleUploaded: {
 			function: { handler: 'src/handlers/triggers/sample-uploaded.rs' },
@@ -27,7 +27,8 @@ function ApiStack({ stack }: StackContext) {
 		}
 	})
 
-	stack.getAllFunctions().forEach((fn) => {
+	const functions = stack.getAllFunctions()
+	functions.forEach((fn) => {
 		fn.addEnvironment('CLONE_VOICE_QUEUE_URL', cloneVoiceQueue.cdk.queue.queueUrl)
 		fn.addEnvironment('SAMPLES_BUCKET_NAME', sampleBucket.bucketName)
 		fn.addEnvironment('OUTPUTS_BUCKET_NAME', outputBucket.bucketName)
@@ -37,10 +38,7 @@ function ApiStack({ stack }: StackContext) {
 
 export default {
 	config(_input) {
-		return {
-			name: 'parrot-api',
-			region: 'us-east-1',
-		}
+		return { name: 'parrot-api', region: 'us-east-1', }
 	},
 	stacks(app) {
 		app.setDefaultFunctionProps({
