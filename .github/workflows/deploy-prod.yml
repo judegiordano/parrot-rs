@@ -27,28 +27,12 @@ jobs:
         with:
           version: 8
 
-      - name: get pnpm store directory
-        shell: bash
-        run: |
-          echo "STORE_PATH=$(pnpm store path --silent)" >> $GITHUB_ENV
-
-      - uses: actions/cache@v3
-        name: setup pnpm cache
-        with:
-          path: ${{ env.STORE_PATH }}
-          key: ${{ runner.os }}-pnpm-store-${{ hashFiles('**/pnpm-lock.yaml') }}
-          restore-keys: |
-            ${{ runner.os }}-pnpm-store-
-
       - name: use Rust
         uses: actions-rs/toolchain@v1
         with:
           toolchain: 1.72.0
           profile: minimal
           override: true
-
-      - name: use Rust cache
-        uses: Swatinem/rust-cache@v2
 
       - name: use Zig
         uses: korandoru/setup-zig@v1
@@ -77,5 +61,6 @@ jobs:
       STAGE: prod
       LOG_LEVEL: info
       MONGO_URI: ${{ secrets.MONGO_URI }}
+      ELEVEN_LABS_API_KEY: ${{ secrets.ELEVEN_LABS_API_KEY }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
