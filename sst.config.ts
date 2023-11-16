@@ -24,7 +24,7 @@ function ApiStack({ stack }: StackContext) {
 	sampleBucket.addNotifications(stack, {
 		sampleUploaded: {
 			function: { handler: 'src/handlers/triggers/sample-uploaded.rs' },
-			events: ['object_created_put'],
+			events: ['object_created_put', 'object_created'],
 			filters: [{ suffix: '.mp3' }],
 		}
 	})
