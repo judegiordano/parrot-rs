@@ -10,21 +10,19 @@ function ApiStack({ stack }: StackContext) {
 		handler: 'src/bin/handlers/api.rs',
 		url: { cors: true }
 	})
-	api.attachPermissions(['sqs'])
 
 	const outputBucket = new Bucket(stack, 'outputs', {
 		cdk: { bucket: { versioned: true, publicReadAccess: false } }
 	})
-	outputBucket.attachPermissions(['s3'])
 
 	const sampleBucket = new Bucket(stack, 'samples', {
 		cdk: { bucket: { versioned: true, publicReadAccess: false } }
 	})
-	sampleBucket.attachPermissions(['s3'])
+
 	sampleBucket.addNotifications(stack, {
 		sampleUploaded: {
 			function: { handler: 'src/handlers/triggers/sample-uploaded.rs' },
-			events: ['object_created_put', 'object_created'],
+			events: ['object_created_put'],
 			filters: [{ suffix: '.mp3' }],
 		}
 	})
@@ -32,6 +30,7 @@ function ApiStack({ stack }: StackContext) {
 	const functions = stack.getAllFunctions()
 	functions.forEach((fn) => {
 		fn.addEnvironment('CLONE_VOICE_QUEUE_URL', cloneVoiceQueue.cdk.queue.queueUrl)
+		fn.attachPermissions(['s3', 'sqs'])
 	})
 }
 
