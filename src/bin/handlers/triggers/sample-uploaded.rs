@@ -10,17 +10,21 @@ use parrot_api::{
 };
 
 async fn handler(event: LambdaEvent<S3Event>) -> Result<()> {
-    tracing::info!("receiving objects {:?}", event.payload.records);
+    tracing::info!("receiving objects {:#?}", event.payload.records);
     for record in event.payload.records {
         let key = &record.s3.object.key.unwrap();
         let split = key.split(".mp3").collect::<Vec<_>>();
-        let key = split.first().unwrap();
+        let voice_id = split.first().unwrap();
         // todo handle errors
         let bucket = record.s3.bucket.name.unwrap();
         let sample_bucket = Client::new(&bucket).await;
+        tracing::info!("[KEY]: {:#?}", key);
+        tracing::info!("[VOICE_ID]: {:#?}", voice_id);
+        tracing::info!("[BUCKET]: {:#?}", bucket);
         let sample = sample_bucket.get_object(key.to_string()).await?;
+        tracing::info!("[SAMPLE]: {:#?}", sample);
         let api = ElevenLabs::new()?;
-        let voice = Voice::read_by_id(&key).await?;
+        let voice = Voice::read_by_id(&voice_id).await?;
         let data = sample.body.collect().await?.to_vec();
         let cloned_voice = api.add_voice(&voice.name, &data, None).await?;
         let updated_voice = Voice::update(
@@ -31,7 +35,7 @@ async fn handler(event: LambdaEvent<S3Event>) -> Result<()> {
             },
         )
         .await?;
-        tracing::info!("cloned voice {:?}", updated_voice);
+        tracing::info!("cloned voice {:#?}", updated_voice);
     }
     Ok(())
 }
