@@ -16,6 +16,7 @@
     "aws-cdk-lib": "2.91.0",
     "constructs": "10.2.69",
     "dotenv": "^16.3.1",
+    "fs-extra": "^11.1.1",
     "sst": "^2.24.27",
     "typescript": "^5.2.2"
   }

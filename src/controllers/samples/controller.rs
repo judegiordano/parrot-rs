@@ -23,8 +23,7 @@ pub async fn request_put_url(body: web::Json<UploadSampleBody>) -> ApiResponse {
     }
     .save()
     .await?;
-    let url = s3
-        .put_presigned_url(&voice.id, Duration::from_secs(60))
-        .await?;
+    let key = format!("{}.mp3", voice.id);
+    let url = s3.put_presigned_url(&key, Duration::from_secs(60)).await?;
     Ok(HttpResponse::Ok().json(json!({ "url": url, "voice": voice })))
 }

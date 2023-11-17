@@ -12,7 +12,10 @@ use parrot_api::{
 async fn handler(event: LambdaEvent<S3Event>) -> Result<()> {
     tracing::info!("receiving objects {:?}", event.payload.records);
     for record in event.payload.records {
-        let key = record.s3.object.key.unwrap();
+        let key = &record.s3.object.key.unwrap();
+        let split = key.split(".mp3").collect::<Vec<_>>();
+        let key = split.first().unwrap();
+        // todo handle errors
         let bucket = record.s3.bucket.name.unwrap();
         let sample_bucket = Client::new(&bucket).await;
         let sample = sample_bucket.get_object(key.to_string()).await?;

@@ -20,6 +20,9 @@ devDependencies:
   dotenv:
     specifier: ^16.3.1
     version: 16.3.1
+  fs-extra:
+    specifier: ^11.1.1
+    version: 11.1.1
   sst:
     specifier: ^2.24.27
     version: 2.24.27
