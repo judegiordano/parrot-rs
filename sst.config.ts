@@ -41,7 +41,6 @@ function ApiStack({ stack }: StackContext) {
 		fn.addEnvironment('OUTPUTS_BUCKET_NAME', outputBucket.bucketName)
 		fn.attachPermissions(['s3', 'sqs'])
 	})
-	stack.addOutputs({ api: api.url })
 }
 
 export default {

@@ -3,6 +3,7 @@ use bytes::Bytes;
 use reqwest::{
     header::{self, HeaderMap},
     multipart::{self, Form},
+    StatusCode,
 };
 use serde::{Deserialize, Serialize};
 use serde_json::json;
@@ -123,6 +124,22 @@ impl ElevenLabs {
     pub async fn get_voice(&self, voice_id: &str) -> Result<Voice> {
         let response = self.get::<Voice>(&format!("voices/{voice_id}")).await?;
         Ok(response)
+    }
+
+    pub async fn delete_voice(&self, voice_id: &str) -> Result<StatusCode> {
+        let base_url = Self::base_url();
+        let headers = self.headers()?;
+        let client = reqwest::Client::builder();
+        let client = client.default_headers(headers).build()?;
+        let url = format!("{base_url}/voices/{voice_id}");
+        let response = match client.delete(url).send().await {
+            Ok(response) => response,
+            Err(err) => {
+                tracing::error!("error connecting to server: {:?}", err.to_string());
+                anyhow::bail!(err)
+            }
+        };
+        Ok(response.status())
     }
 
     // 11mb max file size
