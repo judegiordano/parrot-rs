@@ -9,6 +9,7 @@ use parrot_api::{
     types::CloneVoiceFifoMessage,
 };
 
+#[allow(unused_variables)]
 #[tokio::main]
 pub async fn main() -> Result<()> {
     logger::init()?;

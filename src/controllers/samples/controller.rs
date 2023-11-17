@@ -10,20 +10,33 @@ use crate::{aws::s3::Client, env, errors::ApiResponse, models::voice::Voice};
 #[derive(Deserialize, Serialize)]
 pub struct UploadSampleBody {
     pub voice_name: String,
-    pub description: String,
+    pub description: Option<String>,
 }
 
 pub async fn request_put_url(body: web::Json<UploadSampleBody>) -> ApiResponse {
     let config = env::Config::new()?;
     let s3 = Client::new(&config.samples_bucket_name).await;
+    let name = slug::slugify(body.voice_name.to_string());
+    match Voice::read(doc! { "name": &name }).await {
+        Ok(_) => {
+            return Ok(
+                HttpResponse::BadRequest().json(json!({ "error": "voice with name is taken" }))
+            )
+        }
+        Err(_) => (),
+    };
+    let description = body
+        .description
+        .as_ref()
+        .map_or(None, |desc| Some(desc.to_string()));
     let voice = Voice {
-        name: body.voice_name.to_string(),
-        description: Some(body.description.to_string()),
+        name,
+        description,
         ..Default::default()
     }
     .save()
     .await?;
     let key = format!("{}.mp3", voice.id);
-    let url = s3.put_presigned_url(&key, Duration::from_secs(60)).await?;
+    let url = s3.put_presigned_url(&key, Duration::from_secs(120)).await?;
     Ok(HttpResponse::Ok().json(json!({ "url": url, "voice": voice })))
 }
