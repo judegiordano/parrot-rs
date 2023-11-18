@@ -23,10 +23,6 @@ function ApiStack({ stack }: StackContext) {
 		sampleUploaded: {
 			function: {
 				handler: 'src/bin/handlers/triggers/sample-uploaded.rs',
-				runtime: 'rust',
-				logRetention: 'one_week',
-				architecture: 'arm_64',
-				memorySize: '2048 MB',
 				timeout: 120,
 			},
 			events: ['object_created_put'],

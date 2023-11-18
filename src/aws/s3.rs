@@ -2,7 +2,8 @@ use anyhow::Result;
 use aws_sdk_s3 as s3;
 use s3::{
     operation::{
-        get_object::GetObjectOutput, list_buckets::ListBucketsOutput, put_object::PutObjectOutput,
+        delete_object::DeleteObjectOutput, get_object::GetObjectOutput,
+        list_buckets::ListBucketsOutput, put_object::PutObjectOutput,
     },
     presigning::PresigningConfig,
     Client as AwsClient,
@@ -69,6 +70,13 @@ impl Client {
             .bucket(bucket)
             .body(body.into())
             .key(key);
+        let output = builder.send().await?;
+        Ok(output)
+    }
+
+    pub async fn delete_object(&self, key: &str) -> Result<DeleteObjectOutput> {
+        let Self { bucket, client } = self;
+        let builder = client.delete_object().bucket(bucket).key(key);
         let output = builder.send().await?;
         Ok(output)
     }
