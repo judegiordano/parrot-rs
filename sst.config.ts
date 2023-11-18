@@ -59,9 +59,10 @@ export default {
 				REGION: app.region,
 				LOG_LEVEL: process.env.LOG_LEVEL,
 				MONGO_URI: process.env.MONGO_URI,
+				AUTHENTICATION_TOKEN: process.env.AUTHENTICATION_TOKEN,
 				ELEVEN_LABS_API_KEY: process.env.ELEVEN_LABS_API_KEY,
 			}
 		})
 		app.stack(ApiStack)
-	},
+	}
 } satisfies SSTConfig

@@ -65,5 +65,6 @@ jobs:
       LOG_LEVEL: info
       MONGO_URI: ${{ secrets.MONGO_URI }}
       ELEVEN_LABS_API_KEY: ${{ secrets.ELEVEN_LABS_API_KEY }}
+      AUTHENTICATION_TOKEN: ${{ secrets.AUTHENTICATION_TOKEN }}
       AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
       AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}

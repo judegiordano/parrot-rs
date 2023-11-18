@@ -1,11 +1,13 @@
 use std::time::Duration;
 
-use lambda_web::actix_web::{web, HttpResponse};
+use lambda_web::actix_web::{web, HttpRequest, HttpResponse};
 use mongoose::{bson::doc, Model};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
-use crate::{aws::s3::Client, env, errors::ApiResponse, models::voice::Voice};
+use crate::{
+    aws::s3::Client, env, errors::ApiResponse, helpers::authenticate, models::voice::Voice,
+};
 
 #[derive(Deserialize, Serialize)]
 pub struct UploadSampleBody {
@@ -13,7 +15,8 @@ pub struct UploadSampleBody {
     pub description: Option<String>,
 }
 
-pub async fn request_put_url(body: web::Json<UploadSampleBody>) -> ApiResponse {
+pub async fn request_put_url(req: HttpRequest, body: web::Json<UploadSampleBody>) -> ApiResponse {
+    authenticate(req).await?;
     let config = env::Config::new()?;
     let s3 = Client::new(&config.samples_bucket_name).await;
     let name = slug::slugify(body.voice_name.to_string());

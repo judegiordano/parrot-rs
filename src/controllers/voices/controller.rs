@@ -1,24 +1,28 @@
-use lambda_web::actix_web::{web, HttpResponse};
+use lambda_web::actix_web::{web, HttpRequest, HttpResponse};
 use mongoose::{bson::doc, Model};
 use serde_json::json;
 
 use crate::{
     eleven_labs::ElevenLabs,
     errors::ApiResponse,
+    helpers::authenticate,
     models::voice::{Voice, VoiceStatus},
 };
 
-pub async fn list_voices() -> ApiResponse {
+pub async fn list_voices(req: HttpRequest) -> ApiResponse {
+    authenticate(req).await?;
     let voices = Voice::list(None, None).await?;
     Ok(HttpResponse::Ok().json(voices))
 }
 
-pub async fn get_voice_by_id(voice_id: web::Path<String>) -> ApiResponse {
+pub async fn get_voice_by_id(req: HttpRequest, voice_id: web::Path<String>) -> ApiResponse {
+    authenticate(req).await?;
     let voice = Voice::read_by_id(&voice_id).await?;
     Ok(HttpResponse::Ok().json(voice))
 }
 
-pub async fn delete_voice(voice_id: web::Path<String>) -> ApiResponse {
+pub async fn delete_voice(req: HttpRequest, voice_id: web::Path<String>) -> ApiResponse {
+    authenticate(req).await?;
     let voice = Voice::read_by_id(&voice_id).await?;
     if voice.status.to_string() != VoiceStatus::Active.to_string() {
         return Ok(
@@ -44,9 +48,13 @@ pub async fn delete_voice(voice_id: web::Path<String>) -> ApiResponse {
             HttpResponse::InternalServerError().json(json!({ "error": "error deleting voice" }))
         );
     }
+    let eleven_labs_id: Option<String> = None;
     let voice = Voice::update(
         doc! { "_id": voice_id.to_string() },
-        doc! { "status": VoiceStatus::Deleted.to_string() },
+        doc! {
+            "status": VoiceStatus::Deleted.to_string(),
+            "eleven_labs_id": eleven_labs_id
+        },
     )
     .await?;
     Ok(HttpResponse::Ok().json(voice))
