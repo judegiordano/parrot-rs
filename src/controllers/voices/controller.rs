@@ -3,9 +3,7 @@ use mongoose::{bson::doc, Model};
 use serde_json::json;
 
 use crate::{
-    aws::s3::Client,
     eleven_labs::ElevenLabs,
-    env::Config,
     errors::ApiResponse,
     helpers::authenticate,
     models::voice::{Voice, VoiceStatus},
@@ -50,12 +48,6 @@ pub async fn delete_voice(req: HttpRequest, voice_id: web::Path<String>) -> ApiR
         return Ok(
             HttpResponse::InternalServerError().json(json!({ "error": "error deleting voice" }))
         );
-    }
-    // remove object from s3
-    {
-        let config = Config::new()?;
-        let samples_bucket = Client::new(&config.samples_bucket_name).await;
-        samples_bucket.delete_object(&voice_id).await?;
     }
     let eleven_labs_id: Option<String> = None;
     let voice = Voice::update(
