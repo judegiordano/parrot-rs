@@ -24,7 +24,7 @@ pub async fn get_voice_by_id(req: HttpRequest, voice_id: web::Path<String>) -> A
 pub async fn delete_voice(req: HttpRequest, voice_id: web::Path<String>) -> ApiResponse {
     authenticate(req).await?;
     let voice = Voice::read_by_id(&voice_id).await?;
-    if voice.status.to_string() != VoiceStatus::Active.to_string() {
+    if voice.status != VoiceStatus::Active {
         return Ok(
             HttpResponse::InternalServerError().json(json!({ "error": "voice is not active" }))
         );

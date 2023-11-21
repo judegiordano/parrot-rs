@@ -6,7 +6,7 @@ use mongoose::{
 };
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, Deserialize, Serialize, Clone)]
+#[derive(Debug, Deserialize, Serialize, Clone, PartialEq)]
 pub enum VoiceStatus {
     Active,
     Draft,
@@ -16,9 +16,9 @@ pub enum VoiceStatus {
 impl VoiceStatus {
     pub fn to_string(&self) -> String {
         match self {
-            VoiceStatus::Active => "active".to_string(),
-            VoiceStatus::Draft => "draft".to_string(),
-            VoiceStatus::Deleted => "deleted".to_string(),
+            VoiceStatus::Active => "Active".to_string(),
+            VoiceStatus::Draft => "Draft".to_string(),
+            VoiceStatus::Deleted => "Deleted".to_string(),
         }
     }
 }
@@ -28,7 +28,7 @@ pub struct Voice {
     #[serde(rename = "_id")]
     pub id: String,
     pub name: String,
-    pub status: String,
+    pub status: VoiceStatus,
     pub description: Option<String>,
     pub eleven_labs_id: Option<String>,
     pub created_at: DateTime,
@@ -40,7 +40,7 @@ impl Default for Voice {
         Self {
             id: Self::generate_nanoid(),
             name: std::string::String::default(),
-            status: VoiceStatus::Draft.to_string(),
+            status: VoiceStatus::Draft,
             description: None,
             eleven_labs_id: None,
             created_at: DateTime::now(),
@@ -61,7 +61,12 @@ impl Voice {
             IndexModel::builder()
                 .keys(doc! { "eleven_labs_id": 1 })
                 .build(),
+            IndexModel::builder().keys(doc! { "status": 1 }).build(),
         ])
         .await
+    }
+
+    pub async fn active_voices_count() -> anyhow::Result<u64> {
+        Ok(Self::count(Some(doc! { "status": VoiceStatus::Active.to_string() })).await?)
     }
 }

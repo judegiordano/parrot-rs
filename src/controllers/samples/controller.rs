@@ -20,7 +20,7 @@ pub async fn request_put_url(req: HttpRequest, body: web::Json<UploadSampleBody>
     let config = env::Config::new()?;
     let s3 = Client::new(&config.samples_bucket_name).await;
     let name = slug::slugify(body.voice_name.to_string());
-    let count = Voice::count(None).await?;
+    let count = Voice::active_voices_count().await?;
     if count >= 10 {
         return Ok(HttpResponse::BadRequest().json(json!({ "error": "10 voice limit reached" })));
     }
