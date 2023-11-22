@@ -4,24 +4,26 @@ use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
+    aws::sqs::{FifoMessage, FifoQueue},
+    env::Config,
     errors::ApiResponse,
     helpers::authenticate,
     models::{
         output::Output,
         voice::{Voice, VoiceStatus},
     },
+    types::CreateOutputFifoMessage,
 };
 
 #[derive(Deserialize, Serialize)]
 pub struct OutputPayload {
-    voice_name: String,
+    voice_id: String,
     text: String,
 }
 
 pub async fn create_output(req: HttpRequest, body: web::Json<OutputPayload>) -> ApiResponse {
     authenticate(req).await?;
-    let name = slug::slugify(body.voice_name.to_string());
-    let voice = match Voice::read(doc! { "name": name }).await {
+    let voice = match Voice::read_by_id(&body.voice_id).await {
         Ok(voice) => voice,
         Err(_) => return Ok(HttpResponse::NotFound().json(json!({ "error": "no voice found" }))),
     };
@@ -34,5 +36,16 @@ pub async fn create_output(req: HttpRequest, body: web::Json<OutputPayload>) -> 
         ..Default::default()
     };
     let output = output.save().await?;
+    let config = Config::new()?;
+    let sqs = FifoQueue::new(config.create_output_queue_url).await;
+    // push to FIFO
+    sqs.send_fifo_message::<CreateOutputFifoMessage>(FifoMessage {
+        body: CreateOutputFifoMessage {
+            output_id: output.id.to_string(),
+        },
+        group: output.voice.to_string(),
+        deduplication_id: output.id.to_string(),
+    })
+    .await?;
     Ok(HttpResponse::Created().json(output))
 }
