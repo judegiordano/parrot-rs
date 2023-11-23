@@ -6,8 +6,8 @@ function ApiStack({ stack }: StackContext) {
 		consumer: 'src/bin/handlers/queues/create-output.rs',
 		cdk: { queue: { fifo: true } }
 	})
-	const trainVoiceQueue = new Queue(stack, 'train-voice-fifo', {
-		consumer: 'src/bin/handlers/queues/train-voice.rs',
+	const trainVoiceQueue = new Queue(stack, 'train-sample-fifo', {
+		consumer: 'src/bin/handlers/queues/train-sample.rs',
 		cdk: { queue: { fifo: true } }
 	})
 	const api = new Function(stack, 'api', {
