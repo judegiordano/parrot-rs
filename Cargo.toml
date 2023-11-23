@@ -48,7 +48,7 @@ name = "create-output"
 path = "src/bin/handlers/queues/create-output.rs"
 
 [[bin]]
-name = "train-sample.rs"
+name = "train-sample"
 path = "src/bin/handlers/queues/train-sample.rs"
 
 [[bin]]
