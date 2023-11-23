@@ -66,7 +66,7 @@ pub async fn search_outputs_text(
 ) -> ApiResponse {
     authenticate(req).await?;
     let results = Output::search_text(&body.text).await?;
-    Ok(HttpResponse::Created().json(results))
+    Ok(HttpResponse::Ok().json(results))
 }
 
 pub async fn get_output_presigned(req: HttpRequest, id: web::Path<String>) -> ApiResponse {
@@ -77,5 +77,11 @@ pub async fn get_output_presigned(req: HttpRequest, id: web::Path<String>) -> Ap
     let key = format!("{}.mp3", output.id);
     let expires = Duration::from_secs(120);
     let url = s3.get_presigned_url(&key, expires).await?;
-    Ok(HttpResponse::Created().json(json!({ "url": url })))
+    Ok(HttpResponse::Ok().json(json!({ "url": url })))
+}
+
+pub async fn get_output(req: HttpRequest, id: web::Path<String>) -> ApiResponse {
+    authenticate(req).await?;
+    let output = Output::read_by_id(&id).await?;
+    Ok(HttpResponse::Ok().json(output))
 }

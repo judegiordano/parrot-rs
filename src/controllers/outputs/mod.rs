@@ -9,4 +9,5 @@ pub fn router(cfg: &mut ServiceConfig) {
         "/{id}/presigned",
         web::get().to(controller::get_output_presigned),
     );
+    cfg.route("/{id}", web::get().to(controller::get_output));
 }
