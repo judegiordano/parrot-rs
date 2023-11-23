@@ -6,6 +6,10 @@ function ApiStack({ stack }: StackContext) {
 		consumer: 'src/bin/handlers/queues/create-output.rs',
 		cdk: { queue: { fifo: true } }
 	})
+	const trainVoiceQueue = new Queue(stack, 'train-voice-fifo', {
+		consumer: 'src/bin/handlers/queues/train-voice.rs',
+		cdk: { queue: { fifo: true } }
+	})
 	const api = new Function(stack, 'api', {
 		handler: 'src/bin/handlers/api.rs',
 		url: { cors: true }
@@ -33,6 +37,7 @@ function ApiStack({ stack }: StackContext) {
 	const functions = stack.getAllFunctions()
 	functions.forEach((fn) => {
 		fn.addEnvironment('CREATE_OUTPUT_QUEUE_URL', createOutputQueue.cdk.queue.queueUrl)
+		fn.addEnvironment('TRAIN_VOICE_QUEUE_URL', trainVoiceQueue.cdk.queue.queueUrl)
 		fn.addEnvironment('SAMPLES_BUCKET_NAME', sampleBucket.bucketName)
 		fn.addEnvironment('OUTPUTS_BUCKET_NAME', outputBucket.bucketName)
 		fn.attachPermissions(['s3', 'sqs'])

@@ -25,6 +25,7 @@ pub mod env {
         pub eleven_labs_api_key: String,
         pub authentication_token: String,
         pub create_output_queue_url: String,
+        pub train_voice_queue_url: String,
         pub samples_bucket_name: String,
         pub outputs_bucket_name: String,
     }
@@ -51,6 +52,7 @@ pub mod env {
                 eleven_labs_api_key: std::env::var("ELEVEN_LABS_API_KEY")?,
                 authentication_token: std::env::var("AUTHENTICATION_TOKEN")?,
                 create_output_queue_url: std::env::var("CREATE_OUTPUT_QUEUE_URL")?,
+                train_voice_queue_url: std::env::var("TRAIN_VOICE_QUEUE_URL")?,
                 samples_bucket_name: std::env::var("SAMPLES_BUCKET_NAME")?,
                 outputs_bucket_name: std::env::var("OUTPUTS_BUCKET_NAME")?,
             })
@@ -167,5 +169,10 @@ pub mod types {
     #[derive(Deserialize, Serialize)]
     pub struct CreateOutputFifoMessage {
         pub output_id: String,
+    }
+
+    #[derive(Deserialize, Serialize)]
+    pub struct TrainSampleFifoMessage {
+        pub voice_id: String,
     }
 }

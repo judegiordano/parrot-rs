@@ -10,6 +10,7 @@ use serde::{Deserialize, Serialize};
 pub enum VoiceStatus {
     Active,
     Draft,
+    Training,
     Deleted,
 }
 
@@ -18,6 +19,7 @@ impl VoiceStatus {
         match self {
             VoiceStatus::Active => "Active".to_string(),
             VoiceStatus::Draft => "Draft".to_string(),
+            VoiceStatus::Training => "Training".to_string(),
             VoiceStatus::Deleted => "Deleted".to_string(),
         }
     }
