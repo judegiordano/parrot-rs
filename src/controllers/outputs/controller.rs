@@ -73,7 +73,7 @@ pub async fn get_output_presigned(req: HttpRequest, id: web::Path<String>) -> Ap
     authenticate(req).await?;
     let output = Output::read_by_id(&id).await?;
     let config = env::Config::new()?;
-    let s3 = Client::new(&config.samples_bucket_name).await;
+    let s3 = Client::new(&config.outputs_bucket_name).await;
     let key = format!("{}.mp3", output.id);
     let expires = Duration::from_secs(120);
     let url = s3.get_presigned_url(&key, expires).await?;
