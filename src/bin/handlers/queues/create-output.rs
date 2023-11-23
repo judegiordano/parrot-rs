@@ -29,12 +29,8 @@ pub async fn handler(event: LambdaEvent<SqsEvent>) -> Result<()> {
             .text_to_speech(&voice.eleven_labs_id.unwrap(), &output.text)
             .await?;
         let updated = Output::update(
-            doc! {
-                "_id": output.id
-            },
-            doc! {
-                "status": OutputStatus::Done.to_string()
-            },
+            doc! { "_id": output.id },
+            doc! { "status": OutputStatus::Done.to_string() },
         )
         .await?;
         let key = format!("{}.mp3", updated.id);
