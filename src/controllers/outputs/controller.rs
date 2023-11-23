@@ -49,3 +49,17 @@ pub async fn create_output(req: HttpRequest, body: web::Json<OutputPayload>) -> 
     .await?;
     Ok(HttpResponse::Created().json(output))
 }
+
+#[derive(Deserialize, Serialize)]
+pub struct SearchOutputTextPayload {
+    text: String,
+}
+
+pub async fn search_outputs_text(
+    req: HttpRequest,
+    body: web::Json<SearchOutputTextPayload>,
+) -> ApiResponse {
+    authenticate(req).await?;
+    let results = Output::search_text(&body.text).await?;
+    Ok(HttpResponse::Created().json(results))
+}
