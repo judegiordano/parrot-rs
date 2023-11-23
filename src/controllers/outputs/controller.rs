@@ -1,11 +1,16 @@
+use std::time::Duration;
+
 use lambda_web::actix_web::{web, HttpRequest, HttpResponse};
 use mongoose::{bson::doc, Model};
 use serde::{Deserialize, Serialize};
 use serde_json::json;
 
 use crate::{
-    aws::sqs::{FifoMessage, FifoQueue},
-    env::Config,
+    aws::{
+        s3::Client,
+        sqs::{FifoMessage, FifoQueue},
+    },
+    env::{self, Config},
     errors::ApiResponse,
     helpers::authenticate,
     models::{
@@ -62,4 +67,15 @@ pub async fn search_outputs_text(
     authenticate(req).await?;
     let results = Output::search_text(&body.text).await?;
     Ok(HttpResponse::Created().json(results))
+}
+
+pub async fn get_output_presigned(req: HttpRequest, id: web::Path<String>) -> ApiResponse {
+    authenticate(req).await?;
+    let output = Output::read_by_id(&id).await?;
+    let config = env::Config::new()?;
+    let s3 = Client::new(&config.samples_bucket_name).await;
+    let key = format!("{}.mp3", output.id);
+    let expires = Duration::from_secs(120);
+    let url = s3.get_presigned_url(&key, expires).await?;
+    Ok(HttpResponse::Created().json(json!({ "url": url })))
 }

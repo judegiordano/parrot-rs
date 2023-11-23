@@ -37,10 +37,8 @@ impl Client {
         Ok(output)
     }
 
-    pub async fn get_presigned_url(&self, key: &str) -> Result<String> {
+    pub async fn get_presigned_url(&self, key: &str, expires_in: Duration) -> Result<String> {
         let Self { bucket, client } = self;
-        // TODO: make this configurable
-        let expires_in = Duration::from_secs(60);
         let presigned_request = client
             .get_object()
             .bucket(bucket)
