@@ -37,9 +37,8 @@ pub async fn handler(event: LambdaEvent<SqsEvent>) -> Result<()> {
             },
         )
         .await?;
-        outputs_bucket
-            .put_object(&updated.id, bytes.to_vec())
-            .await?;
+        let key = format!("{}.mp3", updated.id);
+        outputs_bucket.put_object(&key, bytes.to_vec()).await?;
         // TODO: send server side event of process complete
         tracing::info!("OUTPUT: {:?}", updated);
     }
