@@ -49,12 +49,12 @@ pub async fn delete_voice(req: HttpRequest, voice_id: web::Path<String>) -> ApiR
             HttpResponse::InternalServerError().json(json!({ "error": "error deleting voice" }))
         );
     }
-    let eleven_labs_id: Option<String> = None;
+    let empty_eleven_labs_id: Option<String> = None;
     let voice = Voice::update(
         doc! { "_id": voice_id.to_string() },
         doc! {
             "status": VoiceStatus::Deleted.to_string(),
-            "eleven_labs_id": eleven_labs_id
+            "eleven_labs_id": empty_eleven_labs_id
         },
     )
     .await?;

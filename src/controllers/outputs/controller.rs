@@ -28,6 +28,10 @@ pub struct OutputPayload {
 
 pub async fn create_output(req: HttpRequest, body: web::Json<OutputPayload>) -> ApiResponse {
     authenticate(req).await?;
+    if body.text.chars().count() >= 250 {
+        return Ok(HttpResponse::BadRequest()
+            .json(json!({ "error": "text length greater than 250 characters" })));
+    }
     let voice = match Voice::read_by_id(&body.voice_id).await {
         Ok(voice) => voice,
         Err(_) => return Ok(HttpResponse::NotFound().json(json!({ "error": "no voice found" }))),
